@@ -12,13 +12,14 @@ datasource db {
 }
 
 model User {
-  id           Int      @id
+  id           String   @id
   firstname    String
   lastname     String
   email        String   @unique
+  password     String
   profilePic   String?
   role         Role     @default(USER)
-  home         Folder   @relation(name: "homeFolder", fields: [homeFolderId], references: [id])
+  home         Folder   @relation(name: "homeFolder", fields: [homeFolderId], references: [id], onDelete: Cascade)
   homeFolderId Int      @unique
   File         File[]
   Folder       Folder[]
@@ -30,8 +31,8 @@ model Folder {
   url        String
   modifiedAt DateTime @default(now())
   size       Int?     @default(0)
-  user       User?    @relation(fields: [userId], references: [id]) // Does it need a reference to the user ?
-  userId     Int?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade) // Does it need a reference to the user ?
+  userId     String?
   HomeTo     User?    @relation("homeFolder")
   File       File[]
 }
@@ -45,7 +46,7 @@ model File {
   type      String
   size      Int
   user      User      @relation(fields: [userId], references: [id])
-  userId    Int
+  userId    String
   folder    Folder    @relation(fields: [folderId], references: [id])
   folderId  Int
 }

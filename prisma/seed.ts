@@ -1,28 +1,47 @@
+import { parseArgs } from 'node:util';
+
 import { PrismaClient, Role } from '@prisma/client';
 const prisma = new PrismaClient();
 
-async function main() {
-  const admin = await prisma.user.upsert({
-    where: { email: 'admin@homecloud.be' },
-    update: {},
-    create: {
-      id: 1,
-      email: 'admin@homecloud.be',
-      firstname: 'admin',
-      lastname: 'admin',
-      profilePic: '/uploads/default.png',
-      role: Role.ADMIN,
-      home: {
-        create: {
-          id: 1,
-          name: 'home',
-          url: '/storage/users/1/',
-        },
-      },
-    },
-  });
+const options = {
+  environment: { type: 'string' },
+} as const;
 
-  console.log(admin);
+
+
+async function main() {
+
+  const {values: { environment }} = parseArgs({ options });
+
+  switch(environment) {
+    case 'development': {
+      const admin = await prisma.user.upsert({
+        where: { email: 'admin@homecloud.be' },
+        update: {},
+        create: {
+          id: '1',
+          email: 'admin@homecloud.be',
+          firstname: 'admin',
+          lastname: 'admin',
+          password: 'admin',
+          profilePic: '/uploads/default.png',
+          role: Role.ADMIN,
+          home: {
+            create: {
+              id: 1,
+              name: 'home',
+              url: '/storage/users/1/',
+            },
+          },
+        },
+      });
+  
+      console.log(admin);
+
+      break;
+    }
+    // Test case
+  }
 }
 
 main()

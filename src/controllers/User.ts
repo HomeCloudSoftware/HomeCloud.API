@@ -4,6 +4,8 @@ import { getPrisma } from '../data';
 
 const prisma = getPrisma();
 
+export type UserCreate = Omit<User, 'homeFolderId'>
+
 const getUsers = async (): Promise<User[]> => {
   return await prisma.user.findMany();
 };
@@ -14,20 +16,32 @@ const getAdmins = async (): Promise<User[]> => {
   });
 };
 
-const getUserById = async (id: number): Promise<User> => {
+const getUserById = async (id: string): Promise<User> => {
   return await prisma.user.findFirst({
     where: { id },
   });
 };
 
-const createUser = async (data: User): Promise<User> => {
-  const user = await prisma.user.create({ data });
+
+const createUser = async (data: UserCreate): Promise<User> => {
+  const user = await prisma.user.upsert({ 
+    where: {email: data.email},
+    update: {},
+    create: {
+      ...data,
+      home: {
+        create: {
+          name: 'home',
+          url: `/storage/users/${data.id}/`,
+        },
+      },
+    },
+  });
 
   return user;
 };
 
-interface UpdateUser {
-    id: number;
+export interface UpdateUser {
     firstname?: string;
     lastname?: string;
     email?: string;
@@ -35,7 +49,7 @@ interface UpdateUser {
     role?: Role;
 }
 
-const updateUser = async (id: number, data: UpdateUser) => {
+const updateUser = async (id: string, data: UpdateUser) => {
 
   const user = await prisma.user.update({
     where: { id },
@@ -45,7 +59,7 @@ const updateUser = async (id: number, data: UpdateUser) => {
   return user;
 };
 
-const deleteUser = async (id: number): Promise<boolean> => {
+const deleteUser = async (id: string): Promise<boolean> => {
   const user = await prisma.user.delete({
     where: { id },
   });
@@ -53,4 +67,4 @@ const deleteUser = async (id: number): Promise<boolean> => {
   return user !== null;
 };
 
-export { getUsers, getAdmins, getUserById, createUser, updateUser, deleteUser };
+export default { getUsers, getAdmins, getUserById, createUser, updateUser, deleteUser };

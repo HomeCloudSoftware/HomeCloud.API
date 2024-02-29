@@ -12,7 +12,8 @@
     "serve": "ts-node src/index.ts",
     "build": "tsc",
     "prisma:migrate": "npx prisma migrate dev --name init",
-    "prisma:generate": "npx prisma generate"
+    "prisma:generate": "npx prisma generate",
+    "prisma:seed_dev": "npx prisma db seed -- --environment development"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -33,6 +34,8 @@
     "exec": "node --inspect --trace-warnings src/index.js"
   },
   "devDependencies": {
+    "@types/argon2": "^0.15.0",
+    "@types/joi": "^17.2.3",
     "@types/koa": "^2.14.0",
     "@types/koa-bodyparser": "^4.3.12",
     "@types/koa-router": "^7.4.8",
@@ -50,7 +53,9 @@
   "dependencies": {
     "@koa/router": "^12.0.1",
     "@prisma/client": "^5.9.1",
+    "argon2": "^0.31.2",
     "config": "^3.3.11",
+    "joi": "^17.12.1",
     "koa": "^2.15.0",
     "koa-bodyparser": "^4.4.1",
     "koa-cors": "^0.0.16",

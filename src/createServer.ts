@@ -4,8 +4,7 @@ import * as config from 'config';
 import { initializeLogger, getLogger } from './core/logging';
 import { installMiddleware } from './core/installMiddleware';
 import { initializeData, shutdownData } from './data';
-
-
+import installRoutes from './routes';
 
 const LOG_LEVEL: string = config.get('log.level');
 const LOG_DISABLED: boolean = config.get('log.disabled');
@@ -27,6 +26,7 @@ export async function createServer() {
   const app: Koa = new Koa();
 
   installMiddleware(app);
+  installRoutes(app);
 
   return {
     getApp(): Koa {
