@@ -21,7 +21,7 @@ interface CreateFile {
   updatedAt?: Date;
   type: string;
   size: number;
-  userId: number;
+  userId: string;
   folderId: number;
 }
 
@@ -30,7 +30,7 @@ const createFile = async (data: CreateFile): Promise<File> => {
   return file;
 };
 
-interface UpdateFile {
+export interface UpdateFile {
   name?: string;
   url?: string;
   folderId?: number;
@@ -53,4 +53,4 @@ const deleteFile = async (id: number): Promise<boolean> => {
   return file !== null;
 };
 
-export { getFiles, getFileById, createFile, updateFile, deleteFile };
+export default { getFiles, getFileById, createFile, updateFile, deleteFile };
