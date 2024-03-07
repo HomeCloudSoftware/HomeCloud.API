@@ -14,16 +14,22 @@ const getFolderById = async (id: number): Promise<Folder> => {
   });
 };
 
-const createFolder = async (data: Folder): Promise<Folder> => {
+export interface FolderData {
+  name: string;
+  url: string;
+  size: number;
+  userId: string;
+}
+
+const createFolder = async (data: FolderData): Promise<Folder> => {
   const folder = await prisma.folder.create({ data });
 
   return folder;
 };
 
-interface UpdateFolder {
+export interface UpdateFolder {
     name?: string;
     url?: string;
-    modifiedAt?: Date;
     size?: number;
 }
 
@@ -44,4 +50,4 @@ const deleteFolder = async (id: number): Promise<boolean> => {
   return folder !== null;
 };
 
-export { getFolders, getFolderById, createFolder, updateFolder, deleteFolder };
+export default { getFolders, getFolderById, createFolder, updateFolder, deleteFolder };

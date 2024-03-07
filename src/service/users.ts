@@ -8,7 +8,7 @@ import { hashPassword } from '../core/passwords';
 import { handleDBError } from './_handleDBError';
 
 type ReturnUser = Omit<User, 'password'>;
-type UserData = {
+interface UserData {
   firstname: string;
   lastname: string;
   email: string;
@@ -16,8 +16,6 @@ type UserData = {
   role: Role;
   profilePic: string;
 }
-
-// TODO: Error handling, (trycatch)
 
 const getAll = async (): Promise<ReturnUser[]> => {
   return await UserController.getUsers();
@@ -53,17 +51,25 @@ const create = async(data: UserData): Promise<ReturnUser> => {
 
 const update = async (id: string, data: UpdateUser): Promise<ReturnUser> => {
 
-  await getById(id);
+  try {
+    await getById(id);
 
-  const user = await UserController.updateUser(id, data);
+    const user = await UserController.updateUser(id, data);
 
-  return user;
+    return user;
+  } catch (error) {
+    handleDBError(error); 
+  }
 };
 
 const deleteById = async (id: string):Promise<boolean>  => {
-  const deleted = UserController.deleteUser(id);
+  try {
+    const deleted = UserController.deleteUser(id);
 
-  return deleted;
+    return deleted;
+  } catch (error) {
+    handleDBError(error);
+  }
 };
 
 export default {

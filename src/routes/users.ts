@@ -16,20 +16,21 @@ type UserRequest = {
 }
 
 const getAllUsers = async (ctx: Koa.Context): Promise<void> => {
+  ctx.status = 200;
   ctx.body = await UserService.getAll();
 };
 
 const getUserById = async (ctx: Koa.Context): Promise<void> =>  {
+  ctx.status = 200;
   ctx.body = UserService.getById(ctx.params.id);
 };
 
 getUserById.validateScheme = {
   params: Joi.object({
-    id: Joi.string(),
+    id: Joi.string().required(),
   }),
 };
 
-// TODO: routes
 const createUser = async (ctx: Koa.Context): Promise<void> => {
   const data = <UserRequest> ctx.request.body;
   const newUser = await UserService.create({
@@ -43,7 +44,7 @@ const createUser = async (ctx: Koa.Context): Promise<void> => {
 };
 
 createUser.validationScheme = {
-  body: Joi.object({
+  body: Joi.object<UserRequest>({
     firstname: Joi.string().required(),
     lastname: Joi.string().required(),
     email: Joi.string().required(),
@@ -65,7 +66,7 @@ updateUser.validationScheme = {
   params: Joi.object({
     id: Joi.string().required(),
   }),
-  body: Joi.object({
+  body: Joi.object<UserRequest>({
     firstname: Joi.string().required(),
     lastname: Joi.string().required(),
     email: Joi.string().required(),
@@ -94,6 +95,7 @@ export default (app: Router<Koa.DefaultState, Koa.DefaultContext>) => {
   router.get('/:id', validate(getUserById.validateScheme), getUserById);
   router.post('/', validate(createUser.validationScheme), createUser);
   router.put('/:id', validate(updateUser.validationScheme), updateUser);
+  router.delete('/:id', validate(deleteById.validationScheme), deleteById);
 
   app.use(router.routes()).use(router.allowedMethods());
 };
